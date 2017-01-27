@@ -35,7 +35,9 @@ class Main:
         self.from_time = self.get_object('from')
         self.to_time = self.get_object('to')
         self.volume = self.get_object('volume')
+        self.volume.set_range(0,150)
         self.volume.set_value(70)
+        self.remove = self.get_object('remove')
         self.input_choose = self.get_object('input_btn')
         self.output_choose = self.get_object('output_btn')
         self.input = self.get_object('input')
@@ -63,6 +65,7 @@ class Main:
         self.set_from.connect('clicked' , self.btn_from)
         self.set_to.connect('clicked' , self.btn_to)
         self.add.connect('clicked', self.add_item)
+        self.remove.connect('clicked', self.remove_item)
 
         self.volume.connect('value-changed', self.volume_changed)
 
@@ -166,6 +169,7 @@ class Main:
 
     def volume_changed(self , *args):
         self.player.audio_set_volume(int(self.volume.get_value()))
+        print(self.volume.get_value())
 
     def media_freed(self , args):
         print('freed')
@@ -192,14 +196,10 @@ class Main:
                 return
 
         self.list.add(ListBoxRowWithData(data))
-
-        # i = 0
-        # while i < len(sorted):
-        #     childs.append(sorted[i])
-        #     i = i + 1
-        #     print('{} , {}'.format(i,len(sorted)))
-
         self.list.show_all()
+
+    def remove_item(self , args):
+        self.list.remove(self.list.get_selected_row())
 
     def quit(self, *args):
         self.player.stop()

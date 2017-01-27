@@ -10,12 +10,12 @@ class DeletePart:
         if isinstance(start , str) and isinstance(end , str):
             self.start_millis = TimeManager.time_to_millis(start)
             self.end_millis = TimeManager.time_to_millis(end)
-            if  self.start_millis > self.end_millis:
+            if  self.start_millis >= self.end_millis:
                 raise Exception("Error : start must be smaller than end")
             self.start_time = start
             self.end_time = end
         elif isinstance(start , int) and isinstance(end , int):
-            if start > end:
+            if start >= end:
                 raise Exception("Error : start must be smaller than end")
             self.start_time = TimeManager.millis_to_time(start)
             self.end_time = TimeManager.millis_to_time(end)
@@ -30,7 +30,7 @@ class DeletePart:
         return "{} --> {}".format(self.start_time , self.end_time)
 
 
-def bubble_sort(arr ):
+def bubble_sort(arr):
     not_done = True
     while not_done:
         i = 0
