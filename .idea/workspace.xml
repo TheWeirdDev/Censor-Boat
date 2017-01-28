@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="30c909ca-09c0-4081-88ff-183f507ab4aa" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CensorBoat.py" afterPath="$PROJECT_DIR$/CensorBoat.py" />
-    </list>
+    <list default="true" id="30c909ca-09c0-4081-88ff-183f507ab4aa" name="Default" comment="" />
     <ignored path="Censor-Boat.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
