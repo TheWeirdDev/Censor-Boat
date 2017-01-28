@@ -3,9 +3,13 @@ CensorBoat helps you to remove inappropriate or unneeded parts of a movie
 
 # Requirements
 Gnu/Linux
+
 Latest version of ffmpeg installed
+
 Python3
+
 python3-gobject
+
 python3-vlc
 
 to install them on arch linux, use following commands:
