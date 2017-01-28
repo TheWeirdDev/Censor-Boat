@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os , gi
 
 gi.require_version('Gtk' , '3.0')
@@ -6,12 +8,6 @@ from gi.repository import  Gtk , Gdk
 import vlc
 from FFmpeg import *
 from Parts import *
-
-def get_resource_path(rel_path):
-    dir_of_py_file = os.path.dirname(__file__)
-    rel_path_to_resource = os.path.join(dir_of_py_file, rel_path)
-    abs_path_to_resource = os.path.abspath(rel_path_to_resource)
-    return abs_path_to_resource
 
 class ListBoxRowWithData(Gtk.ListBoxRow):
     def __init__(self, data : DeletePart):
@@ -51,6 +47,7 @@ class Main:
         self.input_choose = self.get_object('input_btn')
         self.output_choose = self.get_object('output_btn')
         self.input = self.get_object('input')
+        self.input.set_sensitive(False)
         self.output = self.get_object('output')
         self.add = self.get_object('add')
         self.start = self.get_object('start')
@@ -297,9 +294,9 @@ class Main:
         self.player.stop()
         Gtk.main_quit()
 
-
-Main()
-Gtk.main()
+if __name__ == "__main__":
+    Main()
+    Gtk.main()
 
 #print(TimeManager.millis_to_time(6784545))
 #print(TimeManager.time_to_millis('15:45:34.93'))
