@@ -1,11 +1,11 @@
 import os , gi
 
 gi.require_version('Gtk' , '3.0')
-from gi.repository import  Gtk , Gdk
+from gi.repository import  Gtk , Gdk , GObject
+
 import TimeManager
 import vlc
 from FFmpeg import *
-
 
 class ListBoxRowWithData(Gtk.ListBoxRow):
     def __init__(self, data : DeletePart):
@@ -24,6 +24,8 @@ class Main:
 
     def __init__(self):
         self.builder = Gtk.Builder()
+        settings = Gtk.Settings.get_default()
+        settings.set_long_property("gtk-application-prefer-dark-theme", 1, "gedit:dark-theme")
         self.builder.add_from_file('main.glade')
         self.window = self.get_object('window')
         self.play_area = self.get_object('play_area')
@@ -201,23 +203,31 @@ class Main:
         # self.play_button.set_sensitive(enable)
         # self.set_to
 
+    def show_error(self, message):
+        messagedialog = Gtk.MessageDialog(parent=self.window,
+                                          flags=Gtk.DialogFlags.MODAL,
+                                          type=Gtk.MessageType.ERROR,
+                                          buttons=Gtk.ButtonsType.OK,
+                                          message_format=message)
+
+        messagedialog.connect("response", lambda b, c: messagedialog.close())
+        messagedialog.show()
+
     def add_item(self , args):
         st = self.from_time.get_text()
         en = self.to_time.get_text()
-        data = DeletePart(st, en)
+        data = None
+        try:
+            data = DeletePart(st, en)
+        except:
+            self.show_error("Time format Error .\nIt must be like: XX:XX:XX.XX\nand start time must be smaller than end time")
+            return
 
         childs = self.list.get_children()
         for i in childs:
             if has_conflict(i.get_delete_part(),data):
                 print("Error !!! {} & {}".format(i.get_delete_part() , data))
-                messagedialog = Gtk.MessageDialog(parent=self.window,
-                                                  flags=Gtk.DialogFlags.MODAL,
-                                                  type=Gtk.MessageType.ERROR,
-                                                  buttons=Gtk.ButtonsType.OK,
-                                                  message_format="This part has conflict with others")
-                messagedialog.connect("response", lambda b,c: messagedialog.close())
-
-                messagedialog.show()
+                self.show_error("This part has conflict with others")
                 return
 
         self.list.add(ListBoxRowWithData(data))
