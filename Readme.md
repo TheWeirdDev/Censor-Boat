@@ -1,5 +1,6 @@
 # CensorBoat
 CensorBoat helps you to remove inappropriate or unneeded parts of a movie
+
 <img align="center" src="https://github.com/alireza6677/Censor-Boat/raw/master/CensorBoatIcon.png" alt="Icon">
 
 # Requirements
