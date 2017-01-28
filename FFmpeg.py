@@ -59,6 +59,7 @@ def has_conflict(dp1 : DeletePart, dp2 : DeletePart):
     st2 = dp2.start_millis
 
     one =   st2 <= en1 and en2 >= en1
+    #x =  st2 <= en1 <= en2
     two =   st2 >= st1 and en2 <= en1
     three = st2 <= st1 and en2 >= st1
 
@@ -66,5 +67,6 @@ def has_conflict(dp1 : DeletePart, dp2 : DeletePart):
 
 
 class FFmpegHelper:
+
     pass
 

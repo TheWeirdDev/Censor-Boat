@@ -124,6 +124,23 @@ class Main:
                                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                                             Gtk.STOCK_OPEN, Gtk.ResponseType.ACCEPT))
         file_chooser.set_modal(True)
+        filter = Gtk.FileFilter()
+        filter.set_name("Video Files")
+        filter.add_pattern("*.webm")
+        filter.add_pattern("*.mkv")
+        filter.add_pattern("*.mp4")
+        filter.add_pattern("*.flv")
+        filter.add_pattern("*.vob")
+        filter.add_pattern("*.ogg")
+        filter.add_pattern("*.ogv")
+        filter.add_pattern("*.avi")
+        filter.add_pattern("*.mov")
+        filter.add_pattern("*.mpg")
+        filter.add_pattern("*.wmv")
+        filter.add_pattern("*.mpeg")
+        filter.add_pattern("*.m4v")
+        filter.add_pattern("*.3gp")
+        file_chooser.add_filter(filter)
         file_chooser.connect("response", self.in_response)
         file_chooser.show()
 
@@ -193,6 +210,14 @@ class Main:
         for i in childs:
             if has_conflict(i.get_delete_part(),data):
                 print("Error !!! {} & {}".format(i.get_delete_part() , data))
+                messagedialog = Gtk.MessageDialog(parent=self.window,
+                                                  flags=Gtk.DialogFlags.MODAL,
+                                                  type=Gtk.MessageType.ERROR,
+                                                  buttons=Gtk.ButtonsType.OK,
+                                                  message_format="This part has conflict with others")
+                messagedialog.connect("response", lambda b,c: messagedialog.close())
+
+                messagedialog.show()
                 return
 
         self.list.add(ListBoxRowWithData(data))
