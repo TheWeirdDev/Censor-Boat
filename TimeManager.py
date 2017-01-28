@@ -1,11 +1,3 @@
-from click.termui import secho
-
-
-class Time:
-    time_str = '00:00:00'
-    time_sec = 0
-    time_min = 0
-    time_hour = 0
 
 def millis_to_time(millis):
     millis = millis/1000

@@ -1,11 +1,17 @@
 import os , gi
 
 gi.require_version('Gtk' , '3.0')
-from gi.repository import  Gtk , Gdk , GObject
+from gi.repository import  Gtk , Gdk
 
-import TimeManager
 import vlc
 from FFmpeg import *
+from Parts import *
+
+def get_resource_path(rel_path):
+    dir_of_py_file = os.path.dirname(__file__)
+    rel_path_to_resource = os.path.join(dir_of_py_file, rel_path)
+    abs_path_to_resource = os.path.abspath(rel_path_to_resource)
+    return abs_path_to_resource
 
 class ListBoxRowWithData(Gtk.ListBoxRow):
     def __init__(self, data : DeletePart):
@@ -23,11 +29,13 @@ class ListBoxRowWithData(Gtk.ListBoxRow):
 class Main:
 
     def __init__(self):
-        self.builder = Gtk.Builder()
         settings = Gtk.Settings.get_default()
-        settings.set_long_property("gtk-application-prefer-dark-theme", 1, "gedit:dark-theme")
+        settings.set_property("gtk-application-prefer-dark-theme", True)
+        self.builder = Gtk.Builder()
         self.builder.add_from_file('main.glade')
         self.window = self.get_object('window')
+        self.window.set_title("CensorBoat")
+        self.window.set_icon_from_file("icon.png")
         self.play_area = self.get_object('play_area')
         self.time = self.get_object('time')
         self.seekbar = self.get_object('seekbar')
@@ -45,8 +53,10 @@ class Main:
         self.input = self.get_object('input')
         self.output = self.get_object('output')
         self.add = self.get_object('add')
+        self.start = self.get_object('start')
         self.list = self.get_object('list')
         self.list.set_sort_func(compare_rows)
+        self.progress = self.get_object('progress')
 
         self.output_file = ''
 
@@ -68,6 +78,7 @@ class Main:
         self.set_to.connect('clicked' , self.btn_to)
         self.add.connect('clicked', self.add_item)
         self.remove.connect('clicked', self.remove_item)
+        self.start.connect('clicked', self.start_censor)
 
         self.volume.connect('value-changed', self.volume_changed)
 
@@ -98,6 +109,7 @@ class Main:
         self.player.set_xwindow(win_id)
         #self.player.play()
         event = self.player.event_manager()
+        self.player.audio_set_volume(70)
         event.event_attach(vlc.EventType.MediaPlayerTimeChanged , self.time_changed)
         event.event_attach(vlc.EventType.MediaFreed, self.media_freed)
         event.event_attach(vlc.EventType.MediaPlayerPlaying, self.playing)
@@ -156,6 +168,7 @@ class Main:
             self.seekbar.set_value(0)
             self.play_button.set_image(Gtk.Image(stock=Gtk.STOCK_MEDIA_PLAY))
             self.play_button.set_label("Play")
+            self.progress.set_value(0)
             childs = self.list.get_children()
             for i in childs:
                 self.list.remove(i)
@@ -174,6 +187,23 @@ class Main:
 
         save_dialog.set_do_overwrite_confirmation(True)
         save_dialog.set_modal(True)
+        filter = Gtk.FileFilter()
+        filter.set_name("Video Files")
+        filter.add_pattern("*.webm")
+        filter.add_pattern("*.mkv")
+        filter.add_pattern("*.mp4")
+        filter.add_pattern("*.flv")
+        filter.add_pattern("*.vob")
+        filter.add_pattern("*.ogg")
+        filter.add_pattern("*.ogv")
+        filter.add_pattern("*.avi")
+        filter.add_pattern("*.mov")
+        filter.add_pattern("*.mpg")
+        filter.add_pattern("*.wmv")
+        filter.add_pattern("*.mpeg")
+        filter.add_pattern("*.m4v")
+        filter.add_pattern("*.3gp")
+        save_dialog.add_filter(filter)
         save_dialog.connect("response", self.out_response)
         save_dialog.show()
 
@@ -188,7 +218,6 @@ class Main:
 
     def volume_changed(self , *args):
         self.player.audio_set_volume(int(self.volume.get_value()))
-        print(self.volume.get_value())
 
     def media_freed(self , args):
         print('freed')
@@ -232,9 +261,37 @@ class Main:
 
         self.list.add(ListBoxRowWithData(data))
         self.list.show_all()
+        self.from_time.set_text("00:00:00.00")
+        self.to_time.set_text("00:00:00.00")
 
     def remove_item(self , args):
-        self.list.remove(self.list.get_selected_row())
+        try:
+            self.list.remove(self.list.get_selected_row())
+        except:
+            self.show_error("Nothing selected to remove")
+
+    def start_censor(self , args):
+        if not os.path.exists('/usr/bin/ffmpeg'):
+            self.show_error("/usr/bin/ffmpeg not found :(")
+            return
+        if not os.path.exists( self.input.get_text()):
+            self.show_error("Input file not exist !")
+            return
+
+        times =[]
+
+        for i in self.list.get_children():
+            times.append(i.get_delete_part())
+        if len(times) < 1:
+            self.show_error("Nothing to do ...")
+            return
+
+        try:
+            ff = FFmpegHelper()
+            ff.censor(times , self.input.get_text() , self.output.get_text() ,self.progress)
+            self.show_error("successful")
+        except:
+            self.show_error("Error !")
 
     def quit(self, *args):
         self.player.stop()
