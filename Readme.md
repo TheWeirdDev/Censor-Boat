@@ -14,12 +14,20 @@ python3-gobject
 
 python3-vlc
 
+# Install
+
+## Arch
 to install them on arch linux, use following commands:
 ```
 sudo pacman -S python-gobject python ffmpeg
 sudo pip install python-vlc
 ```
 
+## Ubuntu
+```
+sudo apt install python3 python3-gi vlc ffmpeg
+sudo pip3 install python-vlc
+```
 # Download
 [Download](https://github.com/alireza6677/Censor-Boat/archive/master.zip)
 

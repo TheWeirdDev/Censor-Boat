@@ -31,7 +31,7 @@ class Main:
         self.builder.add_from_file('main.glade')
         self.window = self.get_object('window')
         self.window.set_title("CensorBoat")
-        self.window.set_icon_from_file("icon.png")
+        self.window.set_icon_from_file("cb3.svg")
         self.play_area = self.get_object('play_area')
         self.time = self.get_object('time')
         self.seekbar = self.get_object('seekbar')
@@ -108,7 +108,7 @@ class Main:
         event = self.player.event_manager()
         self.player.audio_set_volume(70)
         event.event_attach(vlc.EventType.MediaPlayerTimeChanged , self.time_changed)
-        event.event_attach(vlc.EventType.MediaFreed, self.media_freed)
+        #event.event_attach(vlc.EventType.MediaFreed, self.media_freed)
         event.event_attach(vlc.EventType.MediaPlayerPlaying, self.playing)
 
 
@@ -216,8 +216,8 @@ class Main:
     def volume_changed(self , *args):
         self.player.audio_set_volume(int(self.volume.get_value()))
 
-    def media_freed(self , args):
-        print('freed')
+    #def media_freed(self , args):
+    #    print('freed')
 
     def playing(self, args):
         print('playing')
